@@ -1,10 +1,10 @@
 (function(){
 
   // ============================================================
-  // EARLYFAST — Widget SAV Universel v3.0
+  // EARLYFAST — Widget SAV Universel v3.1
   // 
   // INSTALLATION sur n'importe quel site :
-  // <script src="https://earlyfast.fr/widget.js" data-client="ID_CLIENT"></script>
+  // <script src="https://cdn.jsdelivr.net/gh/early-widget/earlyfast-widget@main/widget-earlyfast-final.js" data-client="ID_CLIENT"></script>
   //
   // Remplacer ID_CLIENT par l'identifiant dans Supabase config_clients
   // ============================================================
@@ -21,8 +21,8 @@
   var EF_CONFIG = {
     botName:          'Early',
     botEmoji:         '🤖',
-    avatarUrl:        '/ef-chat-avatar.png',
-    logoUrl:          '/ef-chat-logo.png',
+    avatarUrl:        'https://cdn.jsdelivr.net/gh/early-widget/earlyfast-widget@main/avatar.png',
+    logoUrl:          'https://cdn.jsdelivr.net/gh/early-widget/earlyfast-widget@main/logo.png',
     couleurPrimaire:  '#162a4a',
     nomBoutique:      'EarlyFast',
     messageAccueil:   "Bonjour 👋 je suis Early, l'agent qui règle vos demandes en moins d'une minute. Par où commence-t-on ?",
@@ -37,20 +37,20 @@
   };
 
   var QUICK_REPLIES = [
-    { label: "Où est ma commande ? 📦",       rubrique: "suivi_commande",
-      intro: "Donnez-moi votre numéro de commande ou votre email, je trouve ça en quelques secondes." },
-    { label: "Retour / remboursement 🔁",     rubrique: "retour",
-      intro: "Dites-nous en plus sur le produit concerné, je vous guide selon notre politique de retour." },
+    { label: "Où est ma commande ? 📦",        rubrique: "suivi_commande",
+      intro: "Donnez-moi votre email ou numéro de commande, je trouve ça en quelques secondes." },
+    { label: "Retour / remboursement 🔁",      rubrique: "retour",
+      intro: "Dites-moi en plus sur le produit concerné, je vous guide selon notre politique de retour." },
     { label: "Je ne suis pas satisfait(e) 😡", rubrique: "insatisfaction",
       intro: "Je suis désolé pour cette expérience, expliquez-moi ce qui s'est passé, je vais arranger ça rapidement." },
-    { label: "Je commande régulièrement ⭐",   rubrique: "client_vip", vip: true,
+    { label: "Je commande régulièrement ⭐",    rubrique: "client_vip", vip: true,
       intro: "Ravi de vous revoir en tant que client fidèle, vous bénéficiez d'un traitement prioritaire ⭐. Que puis-je faire pour vous ?" },
-    { label: "Question sur un produit 🛒",     rubrique: "pre_vente",
-      intro: "Question produit, précisez le nom ou la référence, je regarde la disponibilité et les caractéristiques." }
+    { label: "Question sur un produit 🛒",      rubrique: "pre_vente",
+      intro: "Précisez le nom ou la référence du produit, je regarde la disponibilité et les caractéristiques." }
   ];
 
   // ============================================================
-  // 3. CSS (identique à ton widget actuel + adaptations dynamiques)
+  // 3. CSS
   // ============================================================
   var css = `
   #ef-chat-wrapper * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -58,11 +58,12 @@
   #ef-chat-btn {
     position: fixed; bottom: 24px; right: 24px;
     width: 60px; height: 60px; border-radius: 50%;
-    background: var(--ef-btn-color, #000);
+    background: var(--ef-btn-color, #162a4a);
     border: none; cursor: pointer;
     box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     display: flex; align-items: center; justify-content: center;
     z-index: 9998; transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden; padding: 0;
   }
   #ef-chat-btn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(0,0,0,0.32); }
   #ef-chat-btn svg { width: 28px; height: 28px; fill: #fff; }
@@ -111,7 +112,7 @@
   .ef-msg.ef-user { align-self:flex-end; flex-direction:row-reverse; }
   .ef-msg-avatar { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; overflow:hidden; }
   .ef-msg-avatar img { width:28px; height:28px; border-radius:50%; object-fit:cover; }
-  .ef-bubble { padding:18px 22px; border-radius:16px; font-size:14px; line-height:1.5; word-break:break-word; }
+  .ef-bubble { padding:10px 14px; border-radius:16px; font-size:14px; line-height:1.5; word-break:break-word; }
   .ef-msg.ef-bot .ef-bubble { background:#E0E0E0; color:#1a1a1a; border-bottom-left-radius:4px; }
   .ef-msg.ef-user .ef-bubble { background:var(--ef-header-color, #162a4a); color:#fff; border-bottom-right-radius:4px; }
 
@@ -131,21 +132,22 @@
 
   #ef-rate-warning { font-size:12px; color:#c0392b; text-align:center; padding:6px 14px; display:none; }
 
-  .ef-quick-replies { display:flex; flex-direction:column; gap:10px; margin-top:6px; margin-bottom:4px; }
+  .ef-quick-replies { display:flex; flex-direction:column; gap:8px; margin-top:6px; margin-bottom:4px; }
   .ef-quick-reply-btn {
     background: var(--ef-header-color, #162a4a); color:#fff; border:none; border-radius:20px;
-    padding:16px 18px; font-size:14px; cursor:pointer; text-align:center;
+    padding:12px 16px; font-size:13px; cursor:pointer; text-align:center;
     display:flex; align-items:center; justify-content:center; transition:opacity 0.2s ease;
   }
   .ef-quick-reply-btn:hover { opacity:0.88; }
   `;
 
   // ============================================================
-  // 4. HTML (identique à ton widget actuel)
+  // 4. HTML
   // ============================================================
   var html = `
   <button id="ef-chat-btn" aria-label="Ouvrir le chat">
-    <img class="ef-icon-chat" id="ef-logo-img" src="/ef-chat-logo.png" alt="Chat">
+    <img class="ef-icon-chat" id="ef-logo-img" src="https://cdn.jsdelivr.net/gh/early-widget/earlyfast-widget@main/logo.png" alt="Chat" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <svg class="ef-icon-open" viewBox="0 0 24 24" style="display:none"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
     <svg class="ef-icon-close" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
     <span id="ef-notif-badge" style="display:none">1</span>
   </button>
@@ -185,14 +187,15 @@
       var data = await res.json();
       if (data && data.length > 0) {
         var cfg = data[0];
-        EF_CONFIG.botName         = cfg.bot_name          || EF_CONFIG.botName;
-        EF_CONFIG.couleurPrimaire = cfg.couleur_primaire   || EF_CONFIG.couleurPrimaire;
-        EF_CONFIG.nomBoutique     = cfg.nom_boutique       || EF_CONFIG.nomBoutique;
-        EF_CONFIG.messageAccueil  = cfg.message_accueil    || EF_CONFIG.messageAccueil;
-        EF_CONFIG.webhookUrl      = cfg.webhook_url        || EF_CONFIG.webhookUrl;
-        EF_CONFIG.widgetKey       = cfg.widget_key         || EF_CONFIG.widgetKey;
-        EF_CONFIG.avatarUrl       = cfg.avatar_url         || EF_CONFIG.avatarUrl;
-        EF_CONFIG.logoUrl         = cfg.logo_url           || EF_CONFIG.logoUrl;
+        EF_CONFIG.botName         = cfg.bot_name         || EF_CONFIG.botName;
+        EF_CONFIG.couleurPrimaire = cfg.couleur_primaire  || EF_CONFIG.couleurPrimaire;
+        EF_CONFIG.nomBoutique     = cfg.nom_boutique      || EF_CONFIG.nomBoutique;
+        EF_CONFIG.messageAccueil  = cfg.message_accueil   || EF_CONFIG.messageAccueil;
+        EF_CONFIG.webhookUrl      = cfg.webhook_url       || EF_CONFIG.webhookUrl;
+        EF_CONFIG.widgetKey       = cfg.widget_key        || EF_CONFIG.widgetKey;
+        // Surcharge les URLs seulement si Supabase fournit une valeur non vide
+        if (cfg.avatar_url && cfg.avatar_url.trim() !== '') EF_CONFIG.avatarUrl = cfg.avatar_url;
+        if (cfg.logo_url   && cfg.logo_url.trim()   !== '') EF_CONFIG.logoUrl   = cfg.logo_url;
       }
     } catch(e) {
       console.warn('[EarlyFast] Config par défaut utilisée');
@@ -206,24 +209,28 @@
   function init() {
     if (document.getElementById('ef-chat-wrapper')) return;
 
-    // Inject CSS
     var style = document.createElement('style');
     style.textContent = css;
     document.head.appendChild(style);
 
-    // Inject HTML
     var wrapper = document.createElement('div');
     wrapper.id = 'ef-chat-wrapper';
     wrapper.innerHTML = html;
     document.body.appendChild(wrapper);
 
-    // Applique les couleurs dynamiques
     document.documentElement.style.setProperty('--ef-header-color', EF_CONFIG.couleurPrimaire);
     document.documentElement.style.setProperty('--ef-btn-color', EF_CONFIG.couleurPrimaire);
 
-    // Mise à jour logo bouton
+    // Logo bouton
     var logoImg = document.getElementById('ef-logo-img');
-    if (logoImg && EF_CONFIG.logoUrl) logoImg.src = EF_CONFIG.logoUrl;
+    if (logoImg) {
+      logoImg.src = EF_CONFIG.logoUrl;
+      logoImg.onerror = function() {
+        this.style.display = 'none';
+        var svgOpen = document.querySelector('#ef-chat-btn .ef-icon-open');
+        if (svgOpen) svgOpen.style.display = 'block';
+      };
+    }
 
     // Nom du bot
     document.getElementById('ef-bot-name-label').textContent = EF_CONFIG.botName;
@@ -231,7 +238,14 @@
     // Avatar header
     var avatar = document.getElementById('ef-bot-avatar');
     if (EF_CONFIG.avatarUrl) {
-      avatar.innerHTML = '<img src="' + EF_CONFIG.avatarUrl + '" alt="bot">';
+      var img = document.createElement('img');
+      img.src = EF_CONFIG.avatarUrl;
+      img.alt = 'bot';
+      img.onerror = function() {
+        avatar.innerHTML = '';
+        avatar.textContent = EF_CONFIG.botEmoji || '🤖';
+      };
+      avatar.appendChild(img);
     } else {
       avatar.textContent = EF_CONFIG.botEmoji || '🤖';
     }
@@ -240,7 +254,7 @@
   }
 
   // ============================================================
-  // 7. LOGIQUE DU WIDGET (identique à ton code actuel)
+  // 7. LOGIQUE DU WIDGET
   // ============================================================
   function startWidget() {
     var sessionId = localStorage.getItem('ef_session_id');
@@ -261,11 +275,11 @@
     var iconClose = btn.querySelector('.ef-icon-close');
     var rateWarn  = document.getElementById('ef-rate-warning');
 
-    var isOpen      = false;
-    var isWaiting   = false;
-    var hasOpened   = false;
-    var lastSendAt  = 0;
-    var msgCount    = parseInt(sessionStorage.getItem('ef_msg_count') || '0', 10);
+    var isOpen          = false;
+    var isWaiting       = false;
+    var hasOpened       = false;
+    var lastSendAt      = 0;
+    var msgCount        = parseInt(sessionStorage.getItem('ef_msg_count') || '0', 10);
     var currentRubrique = 'general';
     var currentVip      = false;
 
@@ -291,9 +305,9 @@
     function openChat() {
       isOpen = true;
       popup.classList.add('ef-open');
-      iconChat.style.display  = 'none';
-      iconClose.style.display = 'block';
-      badge.style.display     = 'none';
+      if (iconChat) iconChat.style.display = 'none';
+      if (iconClose) iconClose.style.display = 'block';
+      badge.style.display = 'none';
       if (!hasOpened) {
         addBotMsg(EF_CONFIG.messageAccueil);
         addQuickReplies();
@@ -306,8 +320,8 @@
     function closeChat() {
       isOpen = false;
       popup.classList.remove('ef-open');
-      iconChat.style.display  = 'block';
-      iconClose.style.display = 'none';
+      if (iconChat) iconChat.style.display = 'block';
+      if (iconClose) iconClose.style.display = 'none';
     }
 
     function resetToMenu() {
@@ -324,7 +338,7 @@
     function getAvatarHtml(size) {
       size = size || 28;
       if (EF_CONFIG.avatarUrl) {
-        return '<img src="' + EF_CONFIG.avatarUrl + '" style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;object-fit:cover">';
+        return '<img src="' + EF_CONFIG.avatarUrl + '" style="width:' + size + 'px;height:' + size + 'px;border-radius:50%;object-fit:cover" onerror="this.parentNode.innerHTML=\'' + (EF_CONFIG.botEmoji || '🤖') + '\'">';
       }
       return escHtml(EF_CONFIG.botEmoji || '🤖');
     }
@@ -398,7 +412,7 @@
       track('message_sent', { message: text });
 
       var controller = new AbortController();
-      var timeoutId  = setTimeout(function(){ controller.abort(); }, EF_CONFIG.fetchTimeoutMs);
+      var timeoutId = setTimeout(function(){ controller.abort(); }, EF_CONFIG.fetchTimeoutMs);
 
       try {
         var res = await fetch(EF_CONFIG.webhookUrl, {
@@ -423,6 +437,11 @@
         clearTimeout(timeoutId);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         var reply = (await res.text()).trim();
+
+        // Réinitialise la rubrique après réponse reçue
+        currentRubrique = 'general';
+        currentVip = false;
+
         addBotMsg(reply || "Je reviens vers vous dans un instant.");
         track('bot_replied', { reply: reply });
 
